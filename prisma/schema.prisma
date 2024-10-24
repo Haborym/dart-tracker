@@ -8,6 +8,36 @@ datasource db {
 }
 
 model User {
-  id   String @id @default(cuid())
-  name String
+  id   String  @id @default(cuid())
+  name String?
+
+  gamesWon    Game[] @relation("gameWinner")
+  gamesPlayed Game[]
+
+  dartsPlayed Dart[] @relation(name: "dartThrower")
+}
+
+model Game {
+  id     String  @id @default(cuid())
+  winner String?
+
+  gameWinner User?  @relation(name: "gameWinner", fields: [winner], references: [id])
+  players    User[]
+
+  date  DateTime @default(now())
+  darts Dart[]   @relation(name: "dartGame")
+}
+
+model Dart {
+  id      String @id @default(cuid())
+  thrower String
+  game    String
+
+  score Int @default(0)
+
+  isDouble Boolean @default(false)
+  isTriple Boolean @default(false)
+
+  dartThrower User @relation(name: "dartThrower", fields: [thrower], references: [id])
+  dartGame    Game @relation(name: "dartGame", fields: [game], references: [id])
 }
